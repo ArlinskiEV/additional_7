@@ -27,20 +27,31 @@ module.exports = function solveSudoku(matrix) {
             .some(j => j.current === num);
           return !(inThis);
         });
-        if (item.mayBe.length === 0) {
-          let inThis = items
-            .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)));
 
-              window.console.log(items
-                .reduce((P, X, I) => {
-                  P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
-                  return P;
-                }, [[], [], [], [], [], [], [], [], []]));
-          window.console.log(`UPS`);
-          throw new Error('WTF??');
-        };
+                                              // if (item.mayBe.length === 0) {
+                                              //   let inThis = items
+                                              //     .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)));
+                                              //   debugger;
+                                              //   window.console.log(items
+                                              //     .reduce((P, X, I) => {
+                                              //       P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
+                                              //       return P;
+                                              //     }, [[], [], [], [], [], [], [], [], []]));
+                                              //   window.console.log(`UPS`);
+                                              //   throw new Error('WTF??');
+                                              // };
+
         if (item.mayBe.length === 1) {
           item.current = item.mayBe.pop();
+          // clear other
+          items
+            .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)))
+            .forEach(i => {
+              if (i.mayBe.indexOf(item.current) !== -1) {
+                i.mayBe.slice(i.mayBe.indexOf(item.current), 1);
+              }
+            });
+                                              // window.console.log(`r:${item.row} c:${item.column} => ${item.current} | mayBe=0`);
           flag = true;
         } else {
           // find num which can be only in this place
@@ -61,6 +72,20 @@ module.exports = function solveSudoku(matrix) {
           if (only.length === 1) {
             item.current = only.pop();
             item.mayBe = [];
+            // clear other
+            items
+              .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)))
+              .forEach(i => {
+                if (i.mayBe.indexOf(item.current) !== -1) {
+                  i.mayBe.slice(i.mayBe.indexOf(item.current), 1);
+                }
+              });
+                                                  // window.console.log(`r:${item.row} c:${item.column} => ${item.current} | only`);
+                                                  // window.console.log(items
+                                                  //   .reduce((P, X, I) => {
+                                                  //     P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
+                                                  //     return P;
+                                                  //   }, [[], [], [], [], [], [], [], [], []]));
             flag = true;
           }
         };
@@ -87,7 +112,8 @@ module.exports = function solveSudoku(matrix) {
                                       //   }, [[], [], [], [], [], [], [], [], []]));
     
     first.current = first.mayBe[0];
-                                      // window.console.log(`row:${first.row} col:${first.column} => ${first.current}`);
+    // first.current = first.mayBe.pop();
+                                      // window.console.log(`r:${first.row} c:${first.column} => ${first.current}`);
     first.mayBe = [];
     res = simple();
     f = res !== f;
