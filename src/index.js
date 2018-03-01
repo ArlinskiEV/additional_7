@@ -28,18 +28,18 @@ module.exports = function solveSudoku(matrix) {
           return !(inThis);
         });
 
-                                              // if (item.mayBe.length === 0) {
-                                              //   let inThis = items
-                                              //     .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)));
-                                              //   debugger;
-                                              //   window.console.log(items
-                                              //     .reduce((P, X, I) => {
-                                              //       P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
-                                              //       return P;
-                                              //     }, [[], [], [], [], [], [], [], [], []]));
-                                              //   window.console.log(`UPS`);
-                                              //   throw new Error('WTF??');
-                                              // };
+                                              if (item.mayBe.length === 0 && item.current) {
+                                                let inThis = items
+                                                  .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)));
+                                                debugger;
+                                                window.console.log(items
+                                                  .reduce((P, X, I) => {
+                                                    P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
+                                                    return P;
+                                                  }, [[], [], [], [], [], [], [], [], []]));
+                                                window.console.log(`UPS`);
+                                                throw new Error('WTF??');
+                                              };
 
         if (item.mayBe.length === 1) {
           item.current = item.mayBe.pop();
@@ -51,7 +51,6 @@ module.exports = function solveSudoku(matrix) {
                 i.mayBe.slice(i.mayBe.indexOf(item.current), 1);
               }
             });
-                                              // window.console.log(`r:${item.row} c:${item.column} => ${item.current} | mayBe=0`);
           flag = true;
         } else {
           // find num which can be only in this place
@@ -80,12 +79,6 @@ module.exports = function solveSudoku(matrix) {
                   i.mayBe.slice(i.mayBe.indexOf(item.current), 1);
                 }
               });
-                                                  // window.console.log(`r:${item.row} c:${item.column} => ${item.current} | only`);
-                                                  // window.console.log(items
-                                                  //   .reduce((P, X, I) => {
-                                                  //     P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
-                                                  //     return P;
-                                                  //   }, [[], [], [], [], [], [], [], [], []]));
             flag = true;
           }
         };
@@ -99,21 +92,10 @@ module.exports = function solveSudoku(matrix) {
   let f = res > 0;
   while ((res > 0) && (f)) {
     f = res;
-
-
-
+    // no one solutions
     let temp = [...items].sort((a, b) => a.mayBe.length - b.mayBe.length);
-    let first = temp[temp.findIndex(i => i.mayBe.length !== 0)];
-                                      // window.console.log(`before:`);
-                                      // window.console.log(items
-                                      //   .reduce((prev, item, index) => {
-                                      //     prev[Math.trunc(index / 9)][index % 9] = item.current ? item.current : item.mayBe.join('/');
-                                      //     return prev;
-                                      //   }, [[], [], [], [], [], [], [], [], []]));
-    
+    let first = temp[temp.findIndex(i => i.mayBe.length !== 0)];    
     first.current = first.mayBe[0];
-    // first.current = first.mayBe.pop();
-                                      // window.console.log(`r:${first.row} c:${first.column} => ${first.current}`);
     first.mayBe = [];
     res = simple();
     f = res !== f;
