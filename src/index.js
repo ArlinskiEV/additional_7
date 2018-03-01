@@ -23,7 +23,7 @@ module.exports = function solveSudoku(matrix) {
       items
       .filter(item => item.mayBe.length !== 0)
       .forEach(item => {
-        // reduce mayBe array
+        // reduce mayBe array by current in row/col/quad
         item.mayBe = item.mayBe.filter(num => {
           let inThis = items
             .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)))
@@ -34,13 +34,38 @@ module.exports = function solveSudoku(matrix) {
         if (item.mayBe.length === 1) {
           item.current = item.mayBe.pop();
           flag = true;
-          // window.console.log(`row=${item.row} col=${item.column} square=${item.square} current=${item.current}`);
+        } else {
+          // find num which can be only in this place
+          let only = item.mayBe.filter(num => {
+            let row = items
+              .filter(i => (i.row === item.row) && (i.column !== item.column))
+              .every(j => j.mayBe.indexOf(num) === -1);
+            let column = items
+              .filter(i => (i.row !== item.row) && (i.column === item.column))
+              .every(j => j.mayBe.indexOf(num) === -1);
+            let square = items
+              .filter(i => (i.square === item.square) && !((i.row === item.row) && (i.column === item.column)))
+              .every(j => j.mayBe.indexOf(num) === -1);
+
+            return row || column || square;
+          });
+
+          if (only.length === 1) {
+            item.current = only.pop();
+            item.mayBe = [];
+            flag = true;
+          }
         };
       });
     } while (flag);
+
+    return items.reduce((prev, i) => i.mayBe.length === 0 ? prev : prev + 1, 0);
   }
 
-  simple();
+  let res = simple();
+  while (res > 0) {
+
+  }
   
   return items
     .reduce((prev, item, index) => {
