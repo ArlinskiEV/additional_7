@@ -2,6 +2,7 @@ module.exports = function solveSudoku(matrix) {
   // your solution
   let items = matrix
     .reduce((prev, item) => [...prev, ...item], [])
+    // init
     .map((item, index) => ({
       current: item,
       mayBe: item
@@ -11,10 +12,6 @@ module.exports = function solveSudoku(matrix) {
       column: index % 9,
       square: (Math.trunc(Math.trunc(index / 9) / 3) * 3) + Math.trunc((index % 9) / 3),})
     );
-
-  // items.forEach(item => {
-  //   window.console.log(`row=${item.row} col=${item.column} square=${item.square} current=${item.current}`);
-  // });
 
   function simple() {
     let flag = false;
@@ -30,7 +27,18 @@ module.exports = function solveSudoku(matrix) {
             .some(j => j.current === num);
           return !(inThis);
         });
+        if (item.mayBe.length === 0) {
+          let inThis = items
+            .filter(i => ((i.row === item.row) || (i.column === item.column) || (i.square === item.square)));
 
+              window.console.log(items
+                .reduce((P, X, I) => {
+                  P[Math.trunc(I / 9)][I % 9] = X.current ? X.current : X.mayBe.join('/');
+                  return P;
+                }, [[], [], [], [], [], [], [], [], []]));
+          window.console.log(`UPS`);
+          throw new Error('WTF??');
+        };
         if (item.mayBe.length === 1) {
           item.current = item.mayBe.pop();
           flag = true;
@@ -63,8 +71,26 @@ module.exports = function solveSudoku(matrix) {
   }
 
   let res = simple();
-  while (res > 0) {
+  let f = res > 0;
+  while ((res > 0) && (f)) {
+    f = res;
 
+
+
+    let temp = [...items].sort((a, b) => a.mayBe.length - b.mayBe.length);
+    let first = temp[temp.findIndex(i => i.mayBe.length !== 0)];
+                                      // window.console.log(`before:`);
+                                      // window.console.log(items
+                                      //   .reduce((prev, item, index) => {
+                                      //     prev[Math.trunc(index / 9)][index % 9] = item.current ? item.current : item.mayBe.join('/');
+                                      //     return prev;
+                                      //   }, [[], [], [], [], [], [], [], [], []]));
+    
+    first.current = first.mayBe[0];
+                                      // window.console.log(`row:${first.row} col:${first.column} => ${first.current}`);
+    first.mayBe = [];
+    res = simple();
+    f = res !== f;
   }
   
   return items
