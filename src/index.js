@@ -29,14 +29,14 @@ module.exports = function solveSudoku(matrix) {
       if (item.mayBe.length === 1) {
         item.current = item.mayBe.pop();
         flag = true;
-        window.console.log(`row=${item.row} col=${item.column} current=${item.current}`);
+        // window.console.log(`row=${item.row} col=${item.column} current=${item.current}`);
       };
     });
   } while (flag);
   
   return items
     .reduce((prev, item, index) => {
-      prev[Math.trunc(index / 9)][index % 9] = item.current;
+      prev[Math.trunc(index / 9)][index % 9] = item.current ? item.current : item.mayBe.join('/');
       return prev;
     }, [[], [], [], [], [], [], [], [], []]);
 }
